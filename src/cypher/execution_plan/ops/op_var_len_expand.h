@@ -17,7 +17,12 @@
 //
 #pragma once
 
+#include <algorithm>
+#include <vector>
 #include "cypher/execution_plan/ops/op.h"
+#include "filter/iterator.h"
+
+#define NDEBUG
 
 #ifndef NDEBUG
 #define VAR_LEN_EXP_DUMP_FOR_DEBUG()                                                         \
@@ -187,6 +192,7 @@ class VarLenExpand : public OpBase {
         if (k == 1) {
             relp_->path_.Append(eits_[0].GetUid());
             if (ctx->path_unique_) pattern_graph_->VisitedEdges().Add(eits_[0]);
+            //firstTimeEits_[k - 1] = eits_[0];
             return eits_[0].GetNbr(expand_direction_);
         }
         // k >= 2
@@ -214,7 +220,7 @@ class VarLenExpand : public OpBase {
         }
         do {
             if (!eits_[k - 1].IsValid()) {
-                auto id = GetNextFromKthHop(ctx, k - 1, get_first);
+                auto id = GetNextFromKthHop(ctx, k - 1, get_first); // 如果无效，则往前找，如果前面全都无效，则表明该hop已经检查完毕，若之前的
                 if (id < 0) return id;
                 _InitializeEdgeIter(ctx, id, eits_[k - 1]);
                 /* We have called get_next previously, mark get_first as
@@ -255,10 +261,15 @@ class VarLenExpand : public OpBase {
             // need expand to next hop
             if (hop_ == max_hop_) return OP_REFRESH;
             hop_++;
+            // 重置path
             auto vid = GetFirstFromKthHop(ctx, hop_ - 1);
             if (vid < 0) return OP_REFRESH;
             if (hop_ > 1 && !eits_[hop_ - 2].IsValid()) CYPHER_INTL_ERR();
-            _InitializeEdgeIter(ctx, vid, eits_[hop_ - 1]);
+            // eits_.clear();
+            // std::copy(firstTimeEits_.begin(), firstTimeEits_.end(), eits_.begin());
+            // auto vid  = eits_[hop_ - 2].GetNbr(expand_direction_);
+            _InitializeEdgeIter(ctx, vid, eits_[hop_ - 1]); // 以vid为基础 找到符合格式的边并获取其iter
+            //firstTimeEits_.push_back(eits_[hop_ - 1]);
             // TODO(anyone) merge these code similiar to GetNextFromKthHop
             do {
                 if (!eits_[hop_ - 1].IsValid()) {
@@ -302,6 +313,9 @@ class VarLenExpand : public OpBase {
     bool collect_all_;
     ExpandTowards expand_direction_;
     std::vector<lgraph::EIter> &eits_;
+    std::vector<lgraph::EIter> firstTimeEits_;
+    std::vector<int> firstTimeVid_;
+
     enum State {
         Uninitialized, /* ExpandAll wasn't initialized it. */
         Resetted,      /* ExpandAll was just restarted. */
@@ -349,6 +363,7 @@ class VarLenExpand : public OpBase {
         record->values[relp_rec_idx_].type = Entry::VAR_LEN_RELP;
         record->values[relp_rec_idx_].relationship = relp_;
         eits_.resize(max_hop_);
+        firstTimeEits_.resize(max_hop_);
         return OP_OK;
     }
 

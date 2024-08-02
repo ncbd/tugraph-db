@@ -15,9 +15,15 @@
 
 #pragma once
 #include <any>
+#include <cstddef>
+#include <memory>
+#include <unordered_map>
+#include <unordered_set>
 #include "lgraph/lgraph.h"
+#include "lgraph_api/result_element.h"
 #include "tools/json.hpp"
 #include "lgraph/lgraph_types.h"
+#include "lgraph/lgraph_result.h"
 
 #ifndef _WIN32
 #include "lgraph/lgraph_traversal.h"
@@ -155,7 +161,9 @@ class Record {
      * @param  txn      Trasaction
      */
     void Insert(const std::string &fname, const traversal::Path &path,
-                lgraph_api::Transaction* txn);
+                lgraph_api::Transaction* txn, 
+                std::unordered_map<size_t,std::shared_ptr<lgraph_api::lgraph_result::Node>>* node_map,
+                std::unordered_map<EdgeUid, std::shared_ptr<lgraph_api::lgraph_result::Relationship>, EdgeUid::Hash>* relp_map);
 #endif
 
     /**
@@ -193,10 +201,13 @@ class Result {
 
     std::vector<Record> result;
     std::vector<std::pair<std::string, LGraphType>> header;
+    std::unordered_map<size_t, std::shared_ptr<lgraph_result::Node>> node_map;
+    std::unordered_map<EdgeUid, std::shared_ptr<lgraph_result::Relationship>, EdgeUid::Hash> relp_map;
     int64_t row_count_;
     bool is_python_driver_ = false;
     int64_t v_eid_ = 0;  // virtual edge id
 
+    
  public:
     Result();
     Result(const std::initializer_list<std::pair<std::string, LGraphType>> &);
@@ -237,6 +248,8 @@ class Result {
      */
     Record *MutableRecord();
 
+    std::unordered_map<size_t, std::shared_ptr<lgraph_result::Node>> *GetNodeMap();
+    std::unordered_map<EdgeUid, std::shared_ptr<lgraph_result::Relationship>, EdgeUid::Hash> *GetRelpMap();
     /**
      * @brief   This function attempts to reserve enough memory for the result vector to hold
      *          the specified number of elements.
