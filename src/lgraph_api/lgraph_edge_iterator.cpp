@@ -17,7 +17,6 @@
 #include "core/transaction.h"
 
 #include "lgraph/lgraph_edge_iterator.h"
-#include <unordered_map>
 
 namespace lgraph_api {
 #define ThrowIfInvalid()                                    \

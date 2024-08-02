@@ -11,6 +11,5 @@
     "disable_auth" : false,
     "ssl_auth" : false,
     "server_key" : "/usr/local/etc/lgraph/server-key.pem",
-    "server_cert" : "/usr/local/etc/lgraph/server-cert.pem",
-    "web" : "/usr/local/share/lgraph/resource"
+    "server_cert" : "/usr/local/etc/lgraph/server-cert.pem"
 }

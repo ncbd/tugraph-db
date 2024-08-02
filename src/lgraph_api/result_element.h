@@ -56,10 +56,6 @@ struct Relationship {
 struct PathElement {
     lgraph_api::LGraphType type_;
     std::variant<std::shared_ptr<Node>, std::shared_ptr<Relationship>> v;
-    // union {
-    //     std::shared_ptr<Node> node;
-    //     std::shared_ptr<Relationship> repl;
-    // } v;
     explicit PathElement(const Node &node) {
         type_ = lgraph_api::LGraphType::NODE;
         v = std::make_shared<Node>(node);
@@ -68,14 +64,12 @@ struct PathElement {
         type_ = lgraph_api::LGraphType::NODE;
         v = node;
     }
-    // explicit PathElement(std::shared_ptr<Node> node) {
-    //     type_ = lgraph_api::LGraphType::NODE;
-    //     v = node;
-    // }
+
     explicit PathElement(const Relationship &repl) {
         type_ = lgraph_api::LGraphType::RELATIONSHIP;
         v = std::make_shared<Relationship>(repl);
     }
+    
     explicit PathElement(std::shared_ptr<Relationship> &&repl) {
         type_ = lgraph_api::LGraphType::RELATIONSHIP;
         v = repl;
