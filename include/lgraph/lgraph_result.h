@@ -15,8 +15,10 @@
 
 #pragma once
 #include <any>
+#include <cstddef>
+#include <memory>
+#include <unordered_map>
 #include "lgraph/lgraph.h"
-#include "tools/json.hpp"
 #include "lgraph/lgraph_types.h"
 
 #ifndef _WIN32
@@ -32,9 +34,19 @@ namespace cypher {
 class PluginAdapter;
 }
 
+
+
 namespace lgraph_api {
 
+namespace lgraph_result {
+struct Node;
+struct Relationship;
+}
+
 struct ResultElement;
+typedef std::unordered_map<size_t, std::shared_ptr<lgraph_result::Node>> NODEMAP;
+typedef std::unordered_map<EdgeUid, std::shared_ptr<lgraph_result::Relationship>,
+        EdgeUid::Hash> RELPMAP;
 
 /**
  * @brief   You only initialize the class by Result instance. Record provide some insert method
@@ -155,7 +167,9 @@ class Record {
      * @param  txn      Trasaction
      */
     void Insert(const std::string &fname, const traversal::Path &path,
-                lgraph_api::Transaction* txn);
+                lgraph_api::Transaction* txn,
+                NODEMAP* node_map,
+                RELPMAP* relp_map);
 #endif
 
     /**
@@ -193,6 +207,8 @@ class Result {
 
     std::vector<Record> result;
     std::vector<std::pair<std::string, LGraphType>> header;
+    NODEMAP node_map;
+    RELPMAP relp_map;
     int64_t row_count_;
     bool is_python_driver_ = false;
     int64_t v_eid_ = 0;  // virtual edge id
@@ -236,7 +252,8 @@ class Result {
      * @returns The reference of record.
      */
     Record *MutableRecord();
-
+    NODEMAP *GetNodeMap();
+    RELPMAP *GetRelpMap();
     /**
      * @brief   This function attempts to reserve enough memory for the result vector to hold
      *          the specified number of elements.
