@@ -1,3 +1,7 @@
+<<<<<<< HEAD
 #match p=(st1:scene{graphId:"ebbc560820b141b1822a0fdc1c4cb2a6"})-[*1..]->(en:scene) return p
 #match (st1:scene{graphId:"ebbc560820b141b1822a0fdc1c4cb2a6"}) return st1
 match p=(st1:scene{graphId:"ebbc560820b141b1822a0fdc1c4cb2a6"})-[*1..]->(en:scene) return p
+=======
+MATCH p = (n {name:'Rachel Kempson'})-[*0..1]-() RETURN p;
+>>>>>>> newBranch

@@ -18,10 +18,14 @@
 #include <cstddef>
 #include <memory>
 #include <unordered_map>
+<<<<<<< HEAD
 #include <unordered_set>
 #include "lgraph/lgraph.h"
 #include "lgraph_api/result_element.h"
 #include "tools/json.hpp"
+=======
+#include "lgraph/lgraph.h"
+>>>>>>> newBranch
 #include "lgraph/lgraph_types.h"
 #include "lgraph/lgraph_result.h"
 
@@ -38,9 +42,19 @@ namespace cypher {
 class PluginAdapter;
 }
 
+
+
 namespace lgraph_api {
 
+namespace lgraph_result {
+struct Node;
+struct Relationship;
+}
+
 struct ResultElement;
+typedef std::unordered_map<size_t, std::shared_ptr<lgraph_result::Node>> NODEMAP;
+typedef std::unordered_map<EdgeUid, std::shared_ptr<lgraph_result::Relationship>,
+        EdgeUid::Hash> RELPMAP;
 
 /**
  * @brief   You only initialize the class by Result instance. Record provide some insert method
@@ -161,9 +175,15 @@ class Record {
      * @param  txn      Trasaction
      */
     void Insert(const std::string &fname, const traversal::Path &path,
+<<<<<<< HEAD
                 lgraph_api::Transaction* txn, 
                 std::unordered_map<size_t,std::shared_ptr<lgraph_api::lgraph_result::Node>>* node_map,
                 std::unordered_map<EdgeUid, std::shared_ptr<lgraph_api::lgraph_result::Relationship>, EdgeUid::Hash>* relp_map);
+=======
+                lgraph_api::Transaction* txn,
+                NODEMAP* node_map,
+                RELPMAP* relp_map);
+>>>>>>> newBranch
 #endif
 
     /**
@@ -201,8 +221,13 @@ class Result {
 
     std::vector<Record> result;
     std::vector<std::pair<std::string, LGraphType>> header;
+<<<<<<< HEAD
     std::unordered_map<size_t, std::shared_ptr<lgraph_result::Node>> node_map;
     std::unordered_map<EdgeUid, std::shared_ptr<lgraph_result::Relationship>, EdgeUid::Hash> relp_map;
+=======
+    NODEMAP node_map;
+    RELPMAP relp_map;
+>>>>>>> newBranch
     int64_t row_count_;
     bool is_python_driver_ = false;
     int64_t v_eid_ = 0;  // virtual edge id
@@ -247,9 +272,14 @@ class Result {
      * @returns The reference of record.
      */
     Record *MutableRecord();
+<<<<<<< HEAD
 
     std::unordered_map<size_t, std::shared_ptr<lgraph_result::Node>> *GetNodeMap();
     std::unordered_map<EdgeUid, std::shared_ptr<lgraph_result::Relationship>, EdgeUid::Hash> *GetRelpMap();
+=======
+    NODEMAP *GetNodeMap();
+    RELPMAP *GetRelpMap();
+>>>>>>> newBranch
     /**
      * @brief   This function attempts to reserve enough memory for the result vector to hold
      *          the specified number of elements.

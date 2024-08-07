@@ -12,10 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  */
 
-#include "fma-common/string_formatter.h"
-#include "lgraph/lgraph_result.h"
 #include <memory>
 #include <utility>
+#include "fma-common/string_formatter.h"
+#include "lgraph/lgraph_result.h"
+<<<<<<< HEAD
+#include <memory>
+#include <utility>
+=======
+>>>>>>> newBranch
 #include "lgraph/lgraph_types.h"
 #include "lgraph_api/result_element.h"
 #include "server/json_convert.h"
@@ -249,23 +254,39 @@ void Record::InsertEdgeByID(const std::string &key, const EdgeUid &uid) {
 Result::Result() : row_count_(-1) {}
 
 void Record::Insert(const std::string &key, const traversal::Path &path,
+<<<<<<< HEAD
                     lgraph_api::Transaction *txn, 
                     std::unordered_map<size_t, std::shared_ptr<lgraph_api::lgraph_result::Node>>* node_map,
                     std::unordered_map<EdgeUid, std::shared_ptr<lgraph_api::lgraph_result::Relationship>, EdgeUid::Hash>* relp_map) {
+=======
+                    lgraph_api::Transaction *txn,
+                    NODEMAP* node_map,
+                    RELPMAP* relp_map) {
+>>>>>>> newBranch
     auto core_txn = txn->GetTxn().get();
     if (!HasKey(key) || header[key] != LGraphType::PATH) {
         throw std::runtime_error(
             FMA_FMT("[STANDARD RESULT ERROR] the variable {} is not exist", key));
     }
     lgraph_result::Path* result_path = new lgraph_result::Path();
+<<<<<<< HEAD
     if (path.Length() == 0) {
         record[key] = std::shared_ptr<ResultElement>(new ResultElement(std::move(result_path)));
     }
+=======
+    // if (path.Length() == 0) {
+    //     record[key] = std::shared_ptr<ResultElement>(new ResultElement(std::move(result_path)));
+    // }
+>>>>>>> newBranch
     for (size_t i = 0; i < path.Length(); i++) {
         auto vid = path.GetNthVertex(i).GetId();
         auto vit = core_txn->GetVertexIterator(vid);
         std::shared_ptr<lgraph_result::Node> node;
+<<<<<<< HEAD
         if(node_map->empty() || node_map->find(vid) == node_map->end()) {
+=======
+        if (node_map->empty() || node_map->find(vid) == node_map->end()) {
+>>>>>>> newBranch
             node = std::make_shared<lgraph_result::Node>();
             node->id = vid;
             node->label = core_txn->GetVertexLabel(vit);
@@ -285,7 +306,11 @@ void Record::Insert(const std::string &key, const traversal::Path &path,
             THROW_CODE(InternalError, "invalid euid {} for inserting path record", euid.ToString());
         }
         std::shared_ptr<lgraph_result::Relationship> relp;
+<<<<<<< HEAD
         if(relp_map->empty() || relp_map->find(euid) == relp_map->end()){
+=======
+        if (relp_map->empty() || relp_map->find(euid) == relp_map->end()) {
+>>>>>>> newBranch
             relp = std::make_shared<lgraph_result::Relationship>();
             relp->id = euid.eid;
             relp->src = euid.src;
@@ -306,7 +331,11 @@ void Record::Insert(const std::string &key, const traversal::Path &path,
     auto vid = path.GetEndVertex().GetId();
     auto vit = core_txn->GetVertexIterator(vid);
     std::shared_ptr<lgraph_result::Node> node;
+<<<<<<< HEAD
     if(node_map->empty() || node_map->find(vid) == node_map->end()) {
+=======
+    if (node_map->empty() || node_map->find(vid) == node_map->end()) {
+>>>>>>> newBranch
         node = std::make_shared<lgraph_result::Node>();
         node->id = vid;
         node->label = core_txn->GetVertexLabel(vit);
@@ -333,11 +362,19 @@ Record *Result::MutableRecord() {
     return &result[row_count_];
 }
 
+<<<<<<< HEAD
 std::unordered_map<size_t, std::shared_ptr<lgraph_result::Node>> *Result::GetNodeMap() {
     return &node_map;
 }
 
 std::unordered_map<EdgeUid, std::shared_ptr<lgraph_result::Relationship>, EdgeUid::Hash> *Result::GetRelpMap() {
+=======
+NODEMAP *Result::GetNodeMap() {
+    return &node_map;
+}
+
+RELPMAP *Result::GetRelpMap() {
+>>>>>>> newBranch
     return &relp_map;
 }
 
