@@ -69,10 +69,6 @@ struct PathElement {
         type_ = lgraph_api::LGraphType::RELATIONSHIP;
         v = std::make_shared<Relationship>(repl);
     }
-<<<<<<< HEAD
-    
-=======
->>>>>>> newBranch
     explicit PathElement(std::shared_ptr<Relationship> &&repl) {
         type_ = lgraph_api::LGraphType::RELATIONSHIP;
         v = repl;
@@ -141,11 +137,6 @@ struct ResultElement {
         data = nullptr;
     }
 
-    explicit ResultElement(lgraph_result::Path* &&data) {
-        type_ = LGraphType::PATH;
-        v.path = data;
-        data = nullptr;
-    }
 
     ResultElement(const ResultElement &);
     ResultElement(const ResultElement &&);
